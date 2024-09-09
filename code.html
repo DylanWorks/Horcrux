@@ -1,0 +1,294 @@
+<html>
+  <head>
+    <title>Horcrux</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <header class="HeaderCode">
+      <nav class="top">
+        <ul class="nav-menu">
+          <li> <a href="index.html">Home</a></li>
+          <li> <a href="about.html">About</a></li>
+          <li class="homebtn"> <a href="code.html">Code</a></li>
+          <li> <a href="messages.html">Messages</a></li>
+          <li> <a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <section class="tagline">
+        <h1>Here is the Python Code</h1>
+        <div class="bodyPara">
+          <h2>Encript</h2>
+        </div>
+          <pre>
+            <code>
+              <div class="codePara">
+            import tkinter as tk
+            from tkinter import filedialog, messagebox
+
+            def read_bmp_pixels(file_path):
+                with open(file_path, 'rb') as file:
+                    # Skip the header (54 bytes for standard BMP headers)
+                    file.seek(54)
+                    
+                    # Read the width and height from the BMP file (offsets 18 and 22)
+                    file.seek(18)
+                    width = int.from_bytes(file.read(4), 'little')
+                    height = int.from_bytes(file.read(4), 'little')
+                    
+                    # Calculate padding (rows must be aligned to 4 bytes)
+                    padding = (4 - (width * 3) % 4) % 4
+                    
+                    # Read pixel data
+                    pixels = []
+                    for y in range(height):
+                        row = []
+                        for x in range(width):
+                            b = file.read(1)[0]
+                            g = file.read(1)[0]
+                            r = file.read(1)[0]
+                            # Calculate brightness as the average of R, G, and B
+                            brightness = (r + g + b) // 3
+                            row.append(brightness)
+                        # Skip padding bytes
+                        file.read(padding)
+                        pixels.extend(row)
+                    
+                    return pixels, width, height
+
+            def save_to_file(data, filename):
+                with open(filename, 'w') as file:
+                    # Convert brightness values to a comma-separated format
+                    formatted_data = ', '.join(f"{value}" for value in data)
+                    file.write(formatted_data)
+
+            def clear_file(filename):
+                try:
+                    with open(filename, 'w') as file:
+                        pass
+                except Exception as e:
+                    print(f"An error occurred while clearing the file: {e}")
+
+            def encrypt_message():
+                try:
+                    # Get user inputs
+                    image_path = image_path_entry.get()
+                    output_file = output_path_entry.get()
+                    user_text = text_entry.get()
+
+                    # Read and save brightness values from the BMP image
+                    brightness_values, _, _ = read_bmp_pixels(image_path)
+                    save_to_file(brightness_values, output_file)
+                    
+                    # Read the key from the output file
+                    with open(output_file) as file:
+                        content = file.read()
+                        key = [int(x) for x in content.split(',')]
+                    
+                    # Encrypt the message
+                    letter_to_num = { 
+                        "a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, 
+                        "i": 9, "j": 10, "k": 11, "l": 12, "m": 13, "n": 14, "o": 15, 
+                        "p": 16, "q": 17, "r": 18, "s": 19, "t": 20, "u": 21, "v": 22, 
+                        "w": 23, "x": 24, "y": 25, "z": 26, 
+                        "A": 27, "B": 28, "C": 29, "D": 30, "E": 31, "F": 32, "G": 33, 
+                        "H": 34, "I": 35, "J": 36, "K": 37, "L": 38, "M": 39, "N": 40, 
+                        "O": 41, "P": 42, "Q": 43, "R": 44, "S": 45, "T": 46, "U": 47, 
+                        "V": 48, "W": 49, "X": 50, "Y": 51, "Z": 52, 
+                        "0": 53, "1": 54, "2": 55, "3": 56, "4": 57, "5": 58, "6": 59, 
+                        "7": 60, "8": 61, "9": 62, 
+                        " ": 63, "!": 64, "\"": 65, "#": 66, "$": 67, "%": 68, "&": 69, 
+                        "'": 70, "(": 71, ")": 72, "*": 73, "+": 74, ",": 75, "-": 76, 
+                        ".": 77, "/": 78, ":": 79, ";": 80, "<": 81, "=": 82, ">": 83, 
+                        "?": 84, "@": 85, "[": 86, "\\": 87, "]": 88, "^": 89, "_": 90, 
+                        "`": 91, "{": 92, "|": 93, "}": 94, "~": 95
+                    }
+                    
+                    # Convert input text to numbers
+                    numlist = [letter_to_num[x] for x in user_text]
+                    
+                    # Encrypt the text using the key
+                    encrypted_message = [numlist[i] + key[i] for i in range(len(numlist))]
+                    
+                    # Display the encrypted message in the output field
+                    output_field.delete(1.0, tk.END)
+                    output_field.insert(tk.END, str(encrypted_message))
+                    
+                except Exception as e:
+                    messagebox.showerror("Error", f"An error occurred: {e}")
+
+            def copy_to_clipboard():
+                # Copy the encrypted message to the clipboard
+                root.clipboard_clear()
+                root.clipboard_append(output_field.get("1.0", tk.END).strip())
+                messagebox.showinfo("Copied", "Encrypted message copied to clipboard!")
+
+            # Create the tkinter window
+            root = tk.Tk()
+            root.title("Encrypt")
+
+            # Input fields for image path, output file, and text
+            tk.Label(root, text="Enter the BMP Image Path:").grid(row=0, column=0)
+            image_path_entry = tk.Entry(root, width=50)
+            image_path_entry.grid(row=0, column=1)
+
+            tk.Label(root, text="Enter the Key Output Path:").grid(row=1, column=0)
+            output_path_entry = tk.Entry(root, width=50)
+            output_path_entry.grid(row=1, column=1)
+
+            tk.Label(root, text="Enter Text to Encrypt:").grid(row=2, column=0)
+            text_entry = tk.Entry(root, width=50)
+            text_entry.grid(row=2, column=1)
+
+            # Button to start encryption
+            encrypt_button = tk.Button(root, text="Encrypt", command=encrypt_message)
+            encrypt_button.grid(row=3, column=0, columnspan=2)
+
+            # Output field to display the encrypted message
+            tk.Label(root, text="Encrypted Message:").grid(row=4, column=0)
+            output_field = tk.Text(root, height=5, width=50)
+            output_field.grid(row=4, column=1)
+
+            # Button to copy the encrypted message to the clipboard
+            copy_button = tk.Button(root, text="Copy to Clipboard", command=copy_to_clipboard)
+            copy_button.grid(row=5, column=0, columnspan=2)
+
+            # Run the tkinter loop
+            root.mainloop()
+              </div>
+            </code>
+          </pre>
+          <div class="bodyPara">
+            <h2>Decript</h2>
+          </div>
+            <pre>
+              <code>
+                <div class="codePara">
+                  import tkinter as tk
+                  from tkinter import messagebox, filedialog
+                  
+                  # Function to read the BMP pixels
+                  def read_bmp_pixels(file_path):
+                      with open(file_path, 'rb') as file:
+                          # Skip the header (54 bytes for standard BMP headers) plus an additional 20 bytes
+                          file.seek(54 + 20)
+                  
+                          # Read the width and height from the BMP file (offsets 18 and 22)
+                          file.seek(18)
+                          width = int.from_bytes(file.read(4), 'little')
+                          height = int.from_bytes(file.read(4), 'little')
+                  
+                          # Calculate padding (rows must be aligned to 4 bytes)
+                          padding = (4 - (width * 3) % 4) % 4
+                  
+                          # Read pixel data
+                          pixels = []
+                          for y in range(height):
+                              row = []
+                              for x in range(width):
+                                  b = file.read(1)[0]
+                                  g = file.read(1)[0]
+                                  r = file.read(1)[0]
+                                  # Calculate brightness as the average of R, G, and B
+                                  brightness = (r + g + b) // 3
+                                  row.append(brightness)
+                              # Skip padding bytes
+                              file.read(padding)
+                              pixels.extend(row)
+                  
+                          return pixels, width, height
+                  
+                  # Function to save brightness values to file
+                  def save_to_file(data, filename):
+                      with open(filename, 'w') as file:
+                          formatted_data = ', '.join(f"{value}" for value in data)
+                          file.write(formatted_data)
+                  
+                  # Function to decrypt the message
+                  def decrypt_message():
+                      try:
+                          encrypted_text = encrypted_message_entry.get()
+                          encrypted_numbers = [int(x) for x in encrypted_text.split(',')]
+                          
+                          # Read the key from the file
+                          with open(output_file_entry.get()) as file:
+                              content = file.read()
+                              key = [int(x) for x in content.split(',')]
+                  
+                          decrypted_numbers = [encrypted_numbers[i] - key[i] for i in range(len(encrypted_numbers))]
+                          
+                          # Mapping numbers back to letters
+                          num_to_letter = {
+                              1: "a", 2: "b", 3: "c", 4: "d", 5: "e", 6: "f", 7: "g", 
+                              8: "h", 9: "i", 10: "j", 11: "k", 12: "l", 13: "m", 
+                              14: "n", 15: "o", 16: "p", 17: "q", 18: "r", 19: "s", 
+                              20: "t", 21: "u", 22: "v", 23: "w", 24: "x", 25: "y", 
+                              26: "z", 27: "A", 28: "B", 29: "C", 30: "D", 31: "E", 
+                              32: "F", 33: "G", 34: "H", 35: "I", 36: "J", 37: "K", 
+                              38: "L", 39: "M", 40: "N", 41: "O", 42: "P", 43: "Q", 
+                              44: "R", 45: "S", 46: "T", 47: "U", 48: "V", 49: "W", 
+                              50: "X", 51: "Y", 52: "Z", 53: "0", 54: "1", 55: "2", 
+                              56: "3", 57: "4", 58: "5", 59: "6", 60: "7", 61: "8", 
+                              62: "9", 63: " ", 64: "!", 65: "\"", 66: "#", 67: "$", 
+                              68: "%", 69: "&", 70: "'", 71: "(", 72: ")", 73: "*", 
+                              74: "+", 75: ",", 76: "-", 77: ".", 78: "/", 79: ":", 
+                              80: ";", 81: "<", 82: "=", 83: ">", 84: "?", 85: "@", 
+                              86: "[", 87: "\\", 88: "]", 89: "^", 90: "_", 91: "`", 
+                              92: "{", 93: "|", 94: "}", 95: "~"
+                          }
+                  
+                          # Convert numbers to letters
+                          decrypted_message = ''.join(num_to_letter[x] for x in decrypted_numbers if x in num_to_letter)
+                          output_field.delete(1.0, tk.END)
+                          output_field.insert(tk.END, decrypted_message)
+                          
+                      except Exception as e:
+                          messagebox.showerror("Error", f"An error occurred: {e}")
+                  
+                  # Function to copy decrypted message to clipboard
+                  def copy_to_clipboard():
+                      root.clipboard_clear()
+                      root.clipboard_append(output_field.get("1.0", tk.END).strip())
+                      messagebox.showinfo("Copied", "Decrypted message copied to clipboard!")
+                  
+                  # Creating tkinter window
+                  root = tk.Tk()
+                  root.title("Decryptor")
+                  
+                  # Image path and output file inputs
+                  tk.Label(root, text="Enter the BMP Image Path:").grid(row=0, column=0)
+                  image_path_entry = tk.Entry(root, width=50)
+                  image_path_entry.grid(row=0, column=1)
+                  
+                  tk.Label(root, text="Enter the Key Output Path:").grid(row=1, column=0)
+                  output_file_entry = tk.Entry(root, width=50)
+                  output_file_entry.grid(row=1, column=1)
+                  
+                  # Encrypted message input
+                  tk.Label(root, text="Enter Encrypted Message (comma-separated):").grid(row=2, column=0)
+                  encrypted_message_entry = tk.Entry(root, width=50)
+                  encrypted_message_entry.grid(row=2, column=1)
+                  
+                  # Button to decrypt the message
+                  decrypt_button = tk.Button(root, text="Decrypt", command=decrypt_message)
+                  decrypt_button.grid(row=3, column=0, columnspan=2)
+                  
+                  # Output field for decrypted message
+                  tk.Label(root, text="Decrypted Message:").grid(row=4, column=0)
+                  output_field = tk.Text(root, height=5, width=50)
+                  output_field.grid(row=4, column=1)
+                  
+                  # Button to copy decrypted message to clipboard
+                  copy_button = tk.Button(root, text="Copy to Clipboard", command=copy_to_clipboard)
+                  copy_button.grid(row=5, column=0, columnspan=2)
+                  
+                  root.mainloop()
+                </div>
+              </code>
+            </pre>
+        
+      </section>
+    </header>
+  </body>
+</html>

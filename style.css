@@ -1,0 +1,191 @@
+/* Reset margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* General styling */
+header {
+    background-color:rgb(54, 54, 54);
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.Headerabout {
+    background-color:rgb(54, 54, 54);
+    height: 160vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.HeaderCode{
+    background-color:rgb(54, 54, 54);
+    height: 1000vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Navigation menu styling */
+.nav-menu {
+    position: absolute; /* Keep the nav menu fixed to the top right */
+    top: 30px;
+    right: 30px;
+    list-style: none;
+    z-index: 2; /* Ensure it's above the tagline */
+}
+
+.nav-menu li {
+    display: inline-block;
+}
+
+.nav-menu li a {
+    color: turquoise;
+    text-decoration: none;
+    padding: 5px 20px;
+    font-family: "verdana", "sans-serif";
+    font-size: 20px;
+}
+
+.homebtn a {
+    border: 1px solid grey;
+    background-color: rgb(0, 0, 0);
+}
+
+.nav-menu li a:hover {
+    border: 1px solid grey;
+}
+
+/* Tagline styling */
+.tagline {
+    position: relative;
+    z-index: 1; /* Ensure it's above the background */
+}
+
+/* Heading styling */
+h1 {
+    color: white;
+    font-size: 50px;
+    font-family: "Verdana", sans-serif;
+    margin-top: 0;
+    user-select: none; /* Prevents text selection */
+}
+h2 {
+    color: turquoise;
+    font-size: 30px;
+    font-family: "Verdana", sans-serif;
+    margin-top: 0;
+    user-select: none; /* Prevents text selection */
+}
+
+/* Centering for .message */
+.message {
+    margin-top: 30px;
+}
+
+/* Button styling */
+.bttn {
+    border: 1px solid white;
+    padding: 10px 30px;
+    color: yellow;
+    font-family: "Verdana", "sans-serif";
+    font-size: 22px;
+    text-decoration: none;
+}
+
+.message a:hover {
+    background-color: burlywood;
+}
+
+/* Message page specific styling */
+.msgPage .bttn {
+    color: black;
+    border: 1px solid gray;
+    margin-top: 30px;
+    z-index: 2; /* Ensure it's above the tagline */
+    position: relative; /* Add this to control stacking context */
+}
+
+.header .msgPage {
+    color: red;
+}
+
+.msg-tagline h2 {
+    color: white;
+    font-size: 50px;
+    font-family: "Verdana", sans-serif;
+    margin-top: 0px;
+    user-select: none; /* Prevents text selection */
+}
+
+/* Container styling */
+.container {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 100px;
+    text-align: center;
+}
+
+/* Message input styling */
+.msg-input {
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    margin: 0 auto; /* Center horizontally */
+}
+
+/* Body paragraph styling */
+.bodyPara {
+    margin: 50px 50px; /* Reducing the top and bottom margins */
+    color: white;
+    text-align: center;
+    font-size: 26px;
+}
+/* Body paragraph styling */
+.codePara {
+    margin: 50px 50px; /* Reducing the top and bottom margins */
+    color: white;
+    text-align: left;
+    font-size: 26px;
+}
+
+
+/* About section styling */
+.about {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+/* Additional button styling */
+.btttn {
+    border: 1px solid white;
+    padding: 10px 30px;
+    color: yellow;
+    font-family: "Verdana", "sans-serif";
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.about a:hover {
+    background-color: burlywood;
+}
+
